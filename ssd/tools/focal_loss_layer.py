@@ -34,11 +34,11 @@ class FocalLoss(mx.operator.CustomOp):
         a = (cls_target > 0) * self.alpha + (cls_target == 0) * (1 - self.alpha)
         gf = v * u * a
 
-        alpha = mx.nd.one_hot(mx.nd.reshape(cls_target, (0, -1)), n_class,
+        label_mask = mx.nd.one_hot(mx.nd.reshape(cls_target, (0, -1)), n_class,
                 on_value=1, off_value=0)
-        alpha = mx.nd.transpose(alpha, (0, 2, 1))
+        label_mask = mx.nd.transpose(label_mask, (0, 2, 1))
 
-        g = (in_data[1] - alpha) * gf
+        g = (in_data[1] - label_mask) * gf
         g *= (cls_target >= 0)
 
         if self.normalize:
